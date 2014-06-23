@@ -118,11 +118,11 @@ void ADDON_Announce(const char *flag, const char *sender, const char *message, c
 
 struct SPC_ID666
 {
-  char songname[32];
-  char gametitle[32];
-  char dumper[16];
-  char comments[32];
-  char author[32];
+  char songname[33];
+  char gametitle[33];
+  char dumper[17];
+  char comments[33];
+  char author[33];
   int64_t playtime;
 };
 

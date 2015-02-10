@@ -21,3 +21,5 @@ set(SNES_SOURCES src/SPCCodec.cpp
                  lib/snes_spc/SPC_Filter.cpp)
 
 build_addon(audiodecoder.snesapu SNES DEPLIBS)
+
+include(CPack)

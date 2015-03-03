@@ -170,15 +170,27 @@ struct SPCContext
   uint8_t* data;
 };
 
+#define SET_IF(ptr, value) \
+{ \
+  if ((ptr)) \
+   *(ptr) = (value); \
+}
+
 void* Init(const char* strFile, unsigned int filecache, int* channels,
            int* samplerate, int* bitspersample, int64_t* totaltime,
            int* bitrate, AEDataFormat* format, const AEChannel** channelinfo)
 {
-  void* file = XBMC->OpenFile(strFile, 0);
-  if (!file)
+  SPCContext* result = new SPCContext;
+  if (!result)
     return NULL;
 
-  SPCContext* result = new SPCContext;
+  void* file = XBMC->OpenFile(strFile, 0);
+  if (!file)
+  {
+    delete result;
+    return NULL;
+  }
+
   result->song = spc_new();
   result->len = XBMC->GetFileLength(file);
   result->data = new uint8_t[result->len];
@@ -190,23 +202,26 @@ void* Init(const char* strFile, unsigned int filecache, int* channels,
   spc_load_spc(result->song, result->data, result->len);
 
   result->tag = SPC_get_id666FP(result->data);
-
-  *channels = 2;
-  *samplerate = 32000;
-  *bitspersample = 16;
   if (!result->tag->playtime)
     result->tag->playtime = 4*60;
-  *totaltime = result->tag->playtime*1000;
-  *format = AE_FMT_S16NE;
-  *channelinfo = NULL;
-  *bitrate = 0;
+
+  SET_IF(channels, 2)
+  SET_IF(samplerate, 32000)
+  SET_IF(bitspersample, 16)
+  SET_IF(totaltime, result->tag->playtime*1000)
+  SET_IF(format, AE_FMT_S16NE)
+  SET_IF(bitrate, 0)
+  static enum AEChannel map[3] = {
+    AE_CH_FL, AE_CH_FR, AE_CH_NULL
+  };
+  SET_IF(channelinfo, map)
 
   return result;
 }
 
 int ReadPCM(void* context, uint8_t* pBuffer, int size, int *actualsize)
 {
-  if (!context)
+  if (!context || !actualsize)
     return 1;
 
   SPCContext* ctx = (SPCContext*)context;
@@ -243,6 +258,9 @@ int64_t Seek(void* context, int64_t time)
 
 bool DeInit(void* context)
 {
+  if (!context)
+    return true;
+
   SPCContext* ctx = (SPCContext*)context;
 
   delete ctx->tag;
@@ -261,6 +279,11 @@ bool ReadTag(const char* strFile, char* title, char* artist,
 
   int len = XBMC->GetFileLength(file);
   uint8_t* data = new uint8_t[len];
+  if (!data)
+  {
+    XBMC->CloseFile(file);
+    return false;
+  }
   XBMC->ReadFile(file, data, len);
   XBMC->CloseFile(file);
 

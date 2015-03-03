@@ -11,14 +11,11 @@ find_package(kodi REQUIRED)
 include_directories(${KODI_INCLUDE_DIR}
                     ${PROJECT_SOURCE_DIR}/lib/snes_spc)
 
-set(SNES_SOURCES src/SPCCodec.cpp
-                 lib/snes_spc/dsp.cpp
-                 lib/snes_spc/SNES_SPC.cpp
-                 lib/snes_spc/SNES_SPC_misc.cpp
-                 lib/snes_spc/SNES_SPC_state.cpp
-                 lib/snes_spc/spc.cpp
-                 lib/snes_spc/SPC_DSP.cpp
-                 lib/snes_spc/SPC_Filter.cpp)
+add_subdirectory(lib/snes_spc)
+
+set(SNES_SOURCES src/SPCCodec.cpp)
+
+set(DEPLIBS snes_spc)
 
 build_addon(audiodecoder.snesapu SNES DEPLIBS)
 

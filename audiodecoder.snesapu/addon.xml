@@ -12,7 +12,11 @@
     name="spc"
     extension=".spc"
     tags="true"
-    library_linux="audiodecoder.snesapu.so"/>
+    library_linux="audiodecoder.snesapu.so"
+    library_osx="audiodecoder.snesapu.dylib"
+    library_freebsd="audiodecoder.snesapu.so"
+    library_windx="audiodecoder.snesapu.dll"
+    library_android="libaudiodecoder.snesapu.so"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">SPC Audio Decoder</summary>
     <description lang="en">SPC Audio Decoder</description>

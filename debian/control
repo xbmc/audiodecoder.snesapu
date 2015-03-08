@@ -1,0 +1,21 @@
+Source: kodi-audiodecoder-snesapu
+Priority: extra
+Maintainer: Arne Morten Kvarving <cptspiff@gmail.com>
+Build-Depends: debhelper (>= 8.0.0), cmake, kodi-audiodecoder-dev,
+               kodi-addon-dev, libkodiplatform-dev
+Standards-Version: 3.9.2
+Section: libs
+
+Package: kodi-audiodecoder-snesapu
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: SnesAPU audio decoder for Kodi
+  SnesAPU audio decoder for Kodi
+
+Package: kodi-audiodecoder-snesapu-dbg
+Section: debug
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: debug symbols for SnesAPU audio decoder for Kodi
+  debug symbols for SnesAPU audio decoder for Kodi

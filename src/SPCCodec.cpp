@@ -18,14 +18,14 @@
  *
  */
 
-#include "kodi/libXBMC_addon.h"
+#include "libXBMC_addon.h"
 #include "spc.h"
 
 ADDON::CHelper_libXBMC_addon *XBMC           = NULL;
 
 extern "C" {
-#include "kodi/kodi_audiodec_dll.h"
-#include "kodi/AEChannelData.h"
+#include "kodi_audiodec_dll.h"
+#include "AEChannelData.h"
 
 char soundfont[1024];
 

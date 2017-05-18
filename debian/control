@@ -1,8 +1,8 @@
 Source: kodi-audiodecoder-snesapu
 Priority: extra
 Maintainer: Arne Morten Kvarving <cptspiff@gmail.com>
-Build-Depends: debhelper (>= 8.0.0), cmake, kodi-audio-dev,
-               kodi-addon-dev, libkodiplatform-dev (>= 16.0.0)
+Build-Depends: debhelper (>= 8.0.0), cmake, kodi-addon-dev,
+               libkodiplatform-dev (>= 16.0.0)
 Standards-Version: 3.9.2
 Section: libs
 

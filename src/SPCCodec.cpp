@@ -18,60 +18,9 @@
  *
  */
 
-#include "libXBMC_addon.h"
+#include <kodi/addon-instance/AudioDecoder.h>
+#include <kodi/Filesystem.h>
 #include "spc.h"
-
-ADDON::CHelper_libXBMC_addon *XBMC           = NULL;
-
-extern "C" {
-#include "kodi_audiodec_dll.h"
-#include "AEChannelData.h"
-
-char soundfont[1024];
-
-//-- Create -------------------------------------------------------------------
-// Called on load. Addon should fully initalize or return error status
-//-----------------------------------------------------------------------------
-ADDON_STATUS ADDON_Create(void* hdl, void* props)
-{
-  if (!XBMC)
-    XBMC = new ADDON::CHelper_libXBMC_addon;
-
-  if (!XBMC->RegisterMe(hdl))
-  {
-    delete XBMC, XBMC=NULL;
-    return ADDON_STATUS_PERMANENT_FAILURE;
-  }
-
-  return ADDON_STATUS_NEED_SETTINGS;
-}
-
-//-- Destroy ------------------------------------------------------------------
-// Do everything before unload of this add-on
-// !!! Add-on master function !!!
-//-----------------------------------------------------------------------------
-void ADDON_Destroy()
-{
-  XBMC=NULL;
-}
-
-//-- GetStatus ---------------------------------------------------------------
-// Returns the current Status of this visualisation
-// !!! Add-on master function !!!
-//-----------------------------------------------------------------------------
-ADDON_STATUS ADDON_GetStatus()
-{
-  return ADDON_STATUS_OK;
-}
-
-//-- SetSetting ---------------------------------------------------------------
-// Set a specific Setting value (called from XBMC)
-// !!! Add-on master function !!!
-//-----------------------------------------------------------------------------
-ADDON_STATUS ADDON_SetSetting(const char *strSetting, const void* value)
-{
-  return ADDON_STATUS_OK;
-}
 
 struct SPC_ID666
 {
@@ -120,143 +69,137 @@ SPC_ID666* SPC_get_id666FP (uint8_t* data)
 
 struct SPCContext
 {
-  SPC_ID666* tag;
-  SNES_SPC* song;
+  SPC_ID666* tag = nullptr;
+  SNES_SPC* song = nullptr;
   int64_t pos;
   int64_t len;
-  uint8_t* data;
+  uint8_t* data = nullptr;
 };
 
-#define SET_IF(ptr, value) \
-{ \
-  if ((ptr)) \
-   *(ptr) = (value); \
-}
 
-void* Init(const char* strFile, unsigned int filecache, int* channels,
-           int* samplerate, int* bitspersample, int64_t* totaltime,
-           int* bitrate, AEDataFormat* format, const AEChannel** channelinfo)
+class CSPCCodec : public kodi::addon::CInstanceAudioDecoder,
+                  public kodi::addon::CAddonBase
 {
-  SPCContext* result = new SPCContext;
-  if (!result)
-    return NULL;
-
-  void* file = XBMC->OpenFile(strFile, 0);
-  if (!file)
+public:
+  CSPCCodec(KODI_HANDLE instance) : 
+    CInstanceAudioDecoder(instance)
   {
-    delete result;
-    return NULL;
   }
 
-  result->song = spc_new();
-  result->len = XBMC->GetFileLength(file);
-  result->data = new uint8_t[result->len];
-  XBMC->ReadFile(file, result->data, result->len);
-  XBMC->CloseFile(file);
-
-  result->pos = 0;
-
-  spc_load_spc(result->song, result->data, result->len);
-
-  result->tag = SPC_get_id666FP(result->data);
-  if (!result->tag->playtime)
-    result->tag->playtime = 4*60;
-
-  SET_IF(channels, 2)
-  SET_IF(samplerate, 32000)
-  SET_IF(bitspersample, 16)
-  SET_IF(totaltime, result->tag->playtime*1000)
-  SET_IF(format, AE_FMT_S16NE)
-  SET_IF(bitrate, 0)
-  static enum AEChannel map[3] = {
-    AE_CH_FL, AE_CH_FR, AE_CH_NULL
-  };
-  SET_IF(channelinfo, map)
-
-  return result;
-}
-
-int ReadPCM(void* context, uint8_t* pBuffer, int size, int *actualsize)
-{
-  if (!context || !actualsize)
-    return 1;
-
-  SPCContext* ctx = (SPCContext*)context;
-
-  if (ctx->pos > ctx->tag->playtime*32000*4)
-    return -1;
-
-  spc_play(ctx->song, size/2, (short*)pBuffer);
-  *actualsize = size;
-  ctx->pos += *actualsize;
-
-  if (*actualsize)
-    return 0;
-
-  return 1;
-}
-
-int64_t Seek(void* context, int64_t time)
-{
-  if (!context)
-    return 0;
-
-  SPCContext* ctx = (SPCContext*)context;
-
-  if (ctx->pos > time/1000*32000*4)
+  virtual ~CSPCCodec()
   {
-    spc_load_spc(ctx->song, ctx->data, ctx->len);
-    ctx->pos = 0;
+    delete ctx.tag;
+    delete[] ctx.data;
+    if (ctx.song)
+      spc_delete(ctx.song);
   }
 
-  spc_skip(ctx->song,time/1000*32000-ctx->pos/2);
-  return time;
-}
+  virtual bool Init(const std::string& filename, unsigned int filecache,
+                    int& channels, int& samplerate,
+                    int& bitspersample, int64_t& totaltime,
+                    int& bitrate, AEDataFormat& format,
+                    std::vector<AEChannel>& channellist) override
+  {
+    kodi::vfs::CFile file;
+    if (!file.OpenFile(filename,0))
+      return false;
 
-bool DeInit(void* context)
-{
-  if (!context)
+    ctx.song = spc_new();
+    ctx.len = file.GetLength();
+    ctx.data = new uint8_t[ctx.len];
+    file.Read(ctx.data, ctx.len);
+    file.Close();
+
+    ctx.pos = 0;
+
+    spc_load_spc(ctx.song, ctx.data, ctx.len);
+
+    ctx.tag = SPC_get_id666FP(ctx.data);
+    if (!ctx.tag->playtime)
+      ctx.tag->playtime = 4*60;
+
+    channels = 2;
+    samplerate = 32000;
+    bitspersample = 16;
+    totaltime =  ctx.tag->playtime*1000;
+    format = AE_FMT_S16NE;
+    bitrate = 0;
+    channellist = { AE_CH_FL, AE_CH_FR };
+
     return true;
-
-  SPCContext* ctx = (SPCContext*)context;
-
-  delete ctx->tag;
-  delete[] ctx->data;
-  delete ctx;
-
-  return true;
-}
-
-bool ReadTag(const char* strFile, char* title, char* artist,
-             int* length)
-{
-  void* file = XBMC->OpenFile(strFile, 0);
-  if (!file)
-    return false;
-
-  int len = XBMC->GetFileLength(file);
-  uint8_t* data = new uint8_t[len];
-  if (!data)
-  {
-    XBMC->CloseFile(file);
-    return false;
   }
-  XBMC->ReadFile(file, data, len);
-  XBMC->CloseFile(file);
 
-  SPC_ID666* tag = SPC_get_id666FP(data);
-  strcpy(title, tag->songname);
-  strcpy(artist, tag->author);
-  *length = tag->playtime;
+  virtual int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
+  {
+    if (ctx.pos > ctx.tag->playtime*32000*4)
+      return -1;
 
-  delete[] data;
-  delete tag;
+    spc_play(ctx.song, size/2, (short*)buffer);
+    actualsize = size;
+    ctx.pos += actualsize;
 
-  return true;
-}
+    if (actualsize)
+      return 0;
 
-int TrackCount(const char* strFile)
+    return 1;
+  }
+
+  virtual int64_t Seek(int64_t time) override
+  {
+    if (ctx.pos > time/1000*32000*4)
+    {
+      spc_load_spc(ctx.song, ctx.data, ctx.len);
+      ctx.pos = 0;
+    }
+
+    spc_skip(ctx.song,time/1000*32000-ctx.pos/2);
+    return time;
+  }
+
+  virtual bool ReadTag(const std::string& filename, std::string& title,
+                       std::string& artist, int& length) override
+  {
+    kodi::vfs::CFile file;
+    if (!file.OpenFile(filename, 0))
+      return false;
+
+    int len = file.GetLength();
+    uint8_t* data = new uint8_t[len];
+    if (!data)
+      return false;
+
+    file.Read(data, len);
+    file.Close();
+
+    SPC_ID666* tag = SPC_get_id666FP(data);
+    title = tag->songname;
+    artist = tag->author;
+    length = tag->playtime;
+
+    delete[] data;
+    delete tag;
+
+    return true;
+  }
+
+private:
+  SPCContext ctx;
+};
+
+
+class ATTRIBUTE_HIDDEN CMyAddon : public kodi::addon::CAddonBase
 {
-  return 1;
-}
-}
+public:
+  CMyAddon() { }
+  virtual ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
+  {
+    addonInstance = new CSPCCodec(instance);
+    return ADDON_STATUS_OK;
+  }
+  virtual ~CMyAddon()
+  {
+  }
+};
+
+
+ADDONCREATOR(CMyAddon);

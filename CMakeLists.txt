@@ -12,7 +12,7 @@ find_package(p8-platform REQUIRED)
 
 include_directories(${kodiplatform_INCLUDE_DIRS}
                     ${p8-platform_INCLUDE_DIRS}
-                    ${KODI_INCLUDE_DIR}
+                    ${KODI_INCLUDE_DIR}/..
                     ${PROJECT_SOURCE_DIR}/lib/snes_spc)
 
 add_subdirectory(lib/snes_spc)

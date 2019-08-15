@@ -77,8 +77,7 @@ struct SPCContext
 };
 
 
-class CSPCCodec : public kodi::addon::CInstanceAudioDecoder,
-                  public kodi::addon::CAddonBase
+class ATTRIBUTE_HIDDEN CSPCCodec : public kodi::addon::CInstanceAudioDecoder
 {
 public:
   CSPCCodec(KODI_HANDLE instance) : 

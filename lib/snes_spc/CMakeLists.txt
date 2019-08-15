@@ -1,8 +1,5 @@
+cmake_minimum_required(VERSION 3.5)
 project(snes_spc)
-
-cmake_minimum_required(VERSION 2.6)
-
-enable_language(CXX)
 
 set(SOURCES dsp.cpp
             SNES_SPC.cpp

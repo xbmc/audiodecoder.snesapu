@@ -9,8 +9,5 @@ set(SOURCES dsp.cpp
             SPC_DSP.cpp
             SPC_Filter.cpp)
 
-if(NOT WIN32)
-  add_options(ALL_LANGUAGES ALL_BUILDS "-fPIC")
-endif()
-
 add_library(snes_spc STATIC ${SOURCES})
+set_property(TARGET snes_spc PROPERTY POSITION_INDEPENDENT_CODE ON)

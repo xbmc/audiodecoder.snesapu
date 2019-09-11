@@ -12,8 +12,8 @@
     tags="true"
     library_@PLATFORM@="@LIBRARY_FILENAME@"/>
   <extension point="xbmc.addon.metadata">
-    <summary lang="en">SPC Audio Decoder</summary>
-    <description lang="en">SPC Audio Decoder</description>
+    <summary lang="en">SNES-SPC700 Sound File Data Decoder</summary>
+    <description lang="en">The SPC format holds Super Nintendo (SNES) game music. It is named after Sony's SPC700 contribution to the SNES's S-SMP audio chip. The SNES was a major jump in audio technology from the NES allowing for stereo sound, more channels, and fully sampled instruments.</description>
     <platform>@PLATFORM@</platform>
   </extension>
 </addon>

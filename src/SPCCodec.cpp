@@ -77,14 +77,11 @@ struct SPCContext
 };
 
 
-class CSPCCodec : public kodi::addon::CInstanceAudioDecoder,
-                  public kodi::addon::CAddonBase
+class ATTRIBUTE_HIDDEN CSPCCodec : public kodi::addon::CInstanceAudioDecoder
 {
 public:
-  CSPCCodec(KODI_HANDLE instance) : 
-    CInstanceAudioDecoder(instance)
-  {
-  }
+  CSPCCodec(KODI_HANDLE instance) :
+    CInstanceAudioDecoder(instance) { }
 
   virtual ~CSPCCodec()
   {
@@ -94,11 +91,11 @@ public:
       spc_delete(ctx.song);
   }
 
-  virtual bool Init(const std::string& filename, unsigned int filecache,
-                    int& channels, int& samplerate,
-                    int& bitspersample, int64_t& totaltime,
-                    int& bitrate, AEDataFormat& format,
-                    std::vector<AEChannel>& channellist) override
+  bool Init(const std::string& filename, unsigned int filecache,
+            int& channels, int& samplerate,
+            int& bitspersample, int64_t& totaltime,
+            int& bitrate, AEDataFormat& format,
+            std::vector<AEChannel>& channellist) override
   {
     kodi::vfs::CFile file;
     if (!file.OpenFile(filename,0))
@@ -129,7 +126,7 @@ public:
     return true;
   }
 
-  virtual int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
+  int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
   {
     if (ctx.pos > ctx.tag->playtime*32000*4)
       return -1;
@@ -144,7 +141,7 @@ public:
     return 1;
   }
 
-  virtual int64_t Seek(int64_t time) override
+  int64_t Seek(int64_t time) override
   {
     if (ctx.pos > time/1000*32000*4)
     {
@@ -156,8 +153,8 @@ public:
     return time;
   }
 
-  virtual bool ReadTag(const std::string& filename, std::string& title,
-                       std::string& artist, int& length) override
+  bool ReadTag(const std::string& filename, std::string& title,
+               std::string& artist, int& length) override
   {
     kodi::vfs::CFile file;
     if (!file.OpenFile(filename, 0))
@@ -190,15 +187,13 @@ private:
 class ATTRIBUTE_HIDDEN CMyAddon : public kodi::addon::CAddonBase
 {
 public:
-  CMyAddon() { }
-  virtual ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
+  CMyAddon() = default;
+  ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
   {
     addonInstance = new CSPCCodec(instance);
     return ADDON_STATUS_OK;
   }
-  virtual ~CMyAddon()
-  {
-  }
+  virtual ~CMyAddon() = default;
 };
 
 

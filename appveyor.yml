@@ -1,6 +1,6 @@
 version: BuildNr.{build}
 
-image: Visual Studio 2015
+image: Visual Studio 2017
 
 shallow_clone: true
 
@@ -10,9 +10,9 @@ environment:
   app_id: audiodecoder.snesapu
 
   matrix:
-    - GENERATOR: "Visual Studio 14"
+    - GENERATOR: "Visual Studio 15"
       CONFIG: Release
-    - GENERATOR: "Visual Studio 14 Win64"
+    - GENERATOR: "Visual Studio 15 Win64"
       CONFIG: Release
 
 build_script:

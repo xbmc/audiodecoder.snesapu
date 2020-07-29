@@ -11,6 +11,7 @@ include_directories(${KODI_INCLUDE_DIR}/..
 add_subdirectory(lib/snes_spc)
 
 set(SNES_SOURCES src/SPCCodec.cpp)
+set(SNES_HEADERS src/SPCCodec.h)
 
 set(DEPLIBS snes_spc)
 

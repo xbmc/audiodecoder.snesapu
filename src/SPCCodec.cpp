@@ -81,8 +81,8 @@ public:
   bool Init(const std::string& filename, unsigned int filecache,
             int& channels, int& samplerate,
             int& bitspersample, int64_t& totaltime,
-            int& bitrate, AEDataFormat& format,
-            std::vector<AEChannel>& channellist) override
+            int& bitrate, AudioEngineDataFormat& format,
+            std::vector<AudioEngineChannel>& channellist) override
   {
     kodi::vfs::CFile file;
     if (!file.OpenFile(filename,0))
@@ -106,9 +106,9 @@ public:
     samplerate = 32000;
     bitspersample = 16;
     totaltime =  ctx.tag->playtime*1000;
-    format = AE_FMT_S16NE;
+    format = AUDIOENGINE_FMT_S16NE;
     bitrate = 0;
-    channellist = { AE_CH_FL, AE_CH_FR };
+    channellist = { AUDIOENGINE_CH_FL, AUDIOENGINE_CH_FR };
 
     return true;
   }
@@ -140,8 +140,7 @@ public:
     return time;
   }
 
-  bool ReadTag(const std::string& filename, std::string& title,
-               std::string& artist, int& length) override
+  bool ReadTag(const std::string& filename, kodi::addon::AudioDecoderInfoTag& tag) override
   {
     kodi::vfs::CFile file;
     if (!file.OpenFile(filename, 0))
@@ -155,13 +154,13 @@ public:
     file.Read(data, len);
     file.Close();
 
-    SPC_ID666* tag = SPC_get_id666FP(data);
-    title = tag->songname;
-    artist = tag->author;
-    length = tag->playtime;
+    SPC_ID666* spcTag = SPC_get_id666FP(data);
+    tag.SetTitle(spcTag->songname);
+    tag.SetArtist(spcTag->author);
+    tag.SetDuration(spcTag->playtime);
 
     delete[] data;
-    delete tag;
+    delete spcTag;
 
     return true;
   }

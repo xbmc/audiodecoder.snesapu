@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(snes_spc)
 
+add_definitions(-DBLARGG_BUILD_DLL)
+
 set(SOURCES dsp.cpp
             SNES_SPC.cpp
             SNES_SPC_misc.cpp

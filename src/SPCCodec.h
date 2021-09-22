@@ -24,7 +24,7 @@ struct SPC_ID666
 struct SPCContext
 {
   SPC_ID666* tag = nullptr;
-  SNES_SPC* song = nullptr;
+  snes_spc_t* song = nullptr;
   int64_t pos;
   int64_t len;
   uint8_t* data = nullptr;

@@ -7,23 +7,14 @@
 
 #pragma once
 
+#include "id666.h"
 #include "spc.h"
 
 #include <kodi/addon-instance/AudioDecoder.h>
 
-struct SPC_ID666
-{
-  char songname[33];
-  char gametitle[33];
-  char dumper[17];
-  char comments[33];
-  char author[33];
-  int64_t playtime;
-};
-
 struct SPCContext
 {
-  SPC_ID666* tag = nullptr;
+  id666 tag{0};
   snes_spc_t* song = nullptr;
   int64_t pos;
   int64_t len;

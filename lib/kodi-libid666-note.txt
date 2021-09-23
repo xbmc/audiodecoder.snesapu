@@ -1,0 +1,3 @@
+libid666 source from https://github.com/jprjr/libid666
+
+Sync to version d493bac (25. Jan. 2020)

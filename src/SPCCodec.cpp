@@ -9,48 +9,11 @@
 
 #include <kodi/Filesystem.h>
 
-namespace
-{
-
-// copied from libspc, then modified. thanks :)
-SPC_ID666* SPC_get_id666FP(uint8_t* data)
-{
-  SPC_ID666* id = new SPC_ID666;
-  unsigned char playtime_str[4] = {0, 0, 0, 0};
-
-  char c;
-  c = data[0x23];
-  if (c == 27)
-  {
-    delete id;
-    return nullptr;
-  }
-
-  memcpy(id->songname, data + 0x2E, 32);
-  id->songname[32] = '\0';
-
-  memcpy(id->gametitle, data + 32 + 0x2E, 32);
-  id->gametitle[32] = '\0';
-
-  memcpy(id->dumper, data + 64 + 0x2E, 16);
-  id->dumper[16] = '\0';
-
-  memcpy(id->comments, data + 64 + 16 + 0x2E, 32);
-  id->comments[32] = '\0';
-
-  memcpy(playtime_str, data + 0xA9, 3);
-  playtime_str[3] = '\0';
-  id->playtime = atoi((char*)playtime_str);
-
-  memcpy(id->author, data + 0xB0, 32);
-  id->author[32] = '\0';
-
-  return id;
-}
-
-} /* namespace */
-
 //------------------------------------------------------------------------------
+
+#define SPC_CHANNELS 2
+#define SPC_SAMPLERATE 32000
+#define SPC_BITSPERSAMPLE 16
 
 CSPCCodec::CSPCCodec(KODI_HANDLE instance, const std::string& version)
   : CInstanceAudioDecoder(instance, version)
@@ -59,7 +22,6 @@ CSPCCodec::CSPCCodec(KODI_HANDLE instance, const std::string& version)
 
 CSPCCodec::~CSPCCodec()
 {
-  delete ctx.tag;
   delete[] ctx.data;
   if (ctx.song)
     spc_delete(ctx.song);
@@ -89,14 +51,16 @@ bool CSPCCodec::Init(const std::string& filename,
 
   spc_load_spc(ctx.song, ctx.data, ctx.len);
 
-  ctx.tag = SPC_get_id666FP(ctx.data);
-  if (!ctx.tag->playtime)
-    ctx.tag->playtime = 4 * 60;
+  if(id666_parse(&ctx.tag, ctx.data, ctx.len) != 0)
+  {
+    kodi::Log(ADDON_LOG_WARNING, "Failed to parse tag information to get play length on '%s', using 4 minutes", filename.c_str());
+    ctx.tag.play_len = 4 * 60;
+  }
 
-  channels = 2;
-  samplerate = 32000;
-  bitspersample = 16;
-  totaltime = ctx.tag->playtime * 1000;
+  channels = SPC_CHANNELS;
+  samplerate = SPC_SAMPLERATE;
+  bitspersample = SPC_BITSPERSAMPLE;
+  totaltime = ctx.tag.play_len * 1000 / SPC_SAMPLERATE / SPC_CHANNELS;
   format = AUDIOENGINE_FMT_S16NE;
   bitrate = 0;
   channellist = {AUDIOENGINE_CH_FL, AUDIOENGINE_CH_FR};
@@ -106,7 +70,7 @@ bool CSPCCodec::Init(const std::string& filename,
 
 int CSPCCodec::ReadPCM(uint8_t* buffer, int size, int& actualsize)
 {
-  if (ctx.pos > ctx.tag->playtime * 32000 * 4)
+  if (ctx.pos >= ctx.tag.play_len)
     return -1;
 
   spc_play(ctx.song, size / 2, (short*)buffer);
@@ -121,13 +85,13 @@ int CSPCCodec::ReadPCM(uint8_t* buffer, int size, int& actualsize)
 
 int64_t CSPCCodec::Seek(int64_t time)
 {
-  if (ctx.pos > time / 1000 * 32000 * 4)
+  if (ctx.pos > time / 1000 * SPC_SAMPLERATE * 4)
   {
     spc_load_spc(ctx.song, ctx.data, ctx.len);
     ctx.pos = 0;
   }
 
-  spc_skip(ctx.song, time / 1000 * 32000 - ctx.pos / 2);
+  spc_skip(ctx.song, time / 1000 * SPC_SAMPLERATE - ctx.pos / 2);
   return time;
 }
 
@@ -145,15 +109,23 @@ bool CSPCCodec::ReadTag(const std::string& filename, kodi::addon::AudioDecoderIn
   file.Read(data, len);
   file.Close();
 
-  SPC_ID666* spcTag = SPC_get_id666FP(data);
-  tag.SetTitle(spcTag->songname);
-  tag.SetArtist(spcTag->author);
-  tag.SetDuration(spcTag->playtime);
-  tag.SetSamplerate(32000);
-  tag.SetChannels(2);
+  id666 spcTag{0};
+  if(id666_parse(&spcTag, data, len) != 0)
+    return false;
+
+  tag.SetArtist(spcTag.artist);
+  tag.SetAlbumArtist(spcTag.publisher);
+  tag.SetTitle(spcTag.song);
+  tag.SetAlbum(spcTag.game);
+  tag.SetDuration(spcTag.play_len / SPC_SAMPLERATE / SPC_CHANNELS);
+  tag.SetDisc(spcTag.ost_disc);
+  tag.SetTrack(spcTag.ost_track);
+  tag.SetReleaseDate(spcTag.year > 0 ? std::to_string(spcTag.year) : "");
+  tag.SetComment(spcTag.comment);
+  tag.SetSamplerate(SPC_SAMPLERATE);
+  tag.SetChannels(SPC_CHANNELS);
 
   delete[] data;
-  delete spcTag;
 
   return true;
 }

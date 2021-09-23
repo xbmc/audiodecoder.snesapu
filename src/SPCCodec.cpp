@@ -51,9 +51,11 @@ bool CSPCCodec::Init(const std::string& filename,
 
   spc_load_spc(ctx.song, ctx.data, ctx.len);
 
-  if(id666_parse(&ctx.tag, ctx.data, ctx.len) != 0)
+  if (id666_parse(&ctx.tag, ctx.data, ctx.len) != 0)
   {
-    kodi::Log(ADDON_LOG_WARNING, "Failed to parse tag information to get play length on '%s', using 4 minutes", filename.c_str());
+    kodi::Log(ADDON_LOG_WARNING,
+              "Failed to parse tag information to get play length on '%s', using 4 minutes",
+              filename.c_str());
     ctx.tag.play_len = 4 * 60;
   }
 
@@ -73,9 +75,9 @@ int CSPCCodec::ReadPCM(uint8_t* buffer, int size, int& actualsize)
   if (ctx.pos >= ctx.tag.play_len)
     return -1;
 
-  spc_play(ctx.song, size / 2, (short*)buffer);
+  spc_play(ctx.song, size / SPC_CHANNELS, (short*)buffer);
   actualsize = size;
-  ctx.pos += actualsize;
+  ctx.pos += actualsize / SPC_CHANNELS;
 
   if (actualsize)
     return 0;
@@ -85,13 +87,15 @@ int CSPCCodec::ReadPCM(uint8_t* buffer, int size, int& actualsize)
 
 int64_t CSPCCodec::Seek(int64_t time)
 {
-  if (ctx.pos > time / 1000 * SPC_SAMPLERATE * 4)
+  int64_t pos = time * SPC_SAMPLERATE * SPC_CHANNELS / 1000;
+  if (ctx.pos > pos)
   {
     spc_load_spc(ctx.song, ctx.data, ctx.len);
     ctx.pos = 0;
   }
 
-  spc_skip(ctx.song, time / 1000 * SPC_SAMPLERATE - ctx.pos / 2);
+  spc_skip(ctx.song, pos - ctx.pos);
+  ctx.pos = pos;
   return time;
 }
 
@@ -110,7 +114,7 @@ bool CSPCCodec::ReadTag(const std::string& filename, kodi::addon::AudioDecoderIn
   file.Close();
 
   id666 spcTag{0};
-  if(id666_parse(&spcTag, data, len) != 0)
+  if (id666_parse(&spcTag, data, len) != 0)
     return false;
 
   tag.SetArtist(spcTag.artist);

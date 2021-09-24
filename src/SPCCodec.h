@@ -44,6 +44,7 @@ public:
 private:
   int GetTrackNumber(std::string& toLoad);
   std::string URLEncode(const std::string& strURLData);
+  std::string GetGenre(char idChar);
 
   SPCContext ctx;
 };

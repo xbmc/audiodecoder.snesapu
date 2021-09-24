@@ -9,6 +9,7 @@
 
 #include <cctype>
 #include <kodi/Filesystem.h>
+#include <kodi/General.h>
 #include <kodi/tools/StringUtils.h>
 #include <unordered_set>
 
@@ -183,7 +184,10 @@ bool CSPCCodec::ReadTag(const std::string& filename, kodi::addon::AudioDecoderIn
         if (last_index != std::string::npos)
         {
           if (filename.substr(last_index - 1)[0] == '-' && !isdigit(filename.substr(last_index)[0]))
+          {
             section = filename.substr(last_index)[0];
+            tag.SetGenre(GetGenre(section));
+          }
           track = atoi(filename.substr(last_index + 1).c_str());
         }
         check_at_end = true;
@@ -303,6 +307,19 @@ int CSPCCodec::GetTrackNumber(std::string& toLoad)
     toLoad = toLoad.substr(0, slash);
   }
   return track;
+}
+
+std::string CSPCCodec::GetGenre(char idChar)
+{
+  switch (idChar)
+  {
+    case 'v':
+      return kodi::GetLocalizedString(30100);
+    default:
+      break;
+  }
+
+  return "";
 }
 
 std::string CSPCCodec::URLEncode(const std::string& strURLData)

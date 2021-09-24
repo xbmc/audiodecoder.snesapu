@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="audiodecoder.snesapu"
-  version="3.0.0"
+  version="19.0.0"
   name="SPC Audio Decoder"
   provider-name="spiff">
-  <requires>@ADDON_DEPENDS@</requires>
+  <requires>@ADDON_DEPENDS@
+    <import addon="vfs.rar" minversion="4.0.0" optional="true"/>
+  </requires>
   <extension
     point="kodi.audiodecoder"
     name="spc"
-    extension=".spc"
+    extension=".spc|.spcstream|.rsn"
     tags="true"
+    tracks="true"
     library_@PLATFORM@="@LIBRARY_FILENAME@"/>
   <extension point="xbmc.addon.metadata">
     <platform>@PLATFORM@</platform>

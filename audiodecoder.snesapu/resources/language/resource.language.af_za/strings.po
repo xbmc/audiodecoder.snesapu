@@ -23,3 +23,8 @@ msgstr ""
 msgctxt "Addon Description"
 msgid "The SPC format holds Super Nintendo (SNES) game music. It is named after Sony's SPC700 contribution to the SNES's S-SMP audio chip. The SNES was a major jump in audio technology from the NES allowing for stereo sound, more channels, and fully sampled instruments."
 msgstr ""
+
+#. Genre type of played game sound file
+msgctxt "#30100"
+msgid "Voice/Speech"
+msgstr ""

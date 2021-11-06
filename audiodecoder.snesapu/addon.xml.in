@@ -10,10 +10,18 @@
   <extension
     point="kodi.audiodecoder"
     name="spc"
-    extension=".spc|.spcstream|.rsn"
     tags="true"
     tracks="true"
-    library_@PLATFORM@="@LIBRARY_FILENAME@"/>
+    library_@PLATFORM@="@LIBRARY_FILENAME@">
+    <support>
+      <extension name=".spc">
+        <description>30200</description>
+      </extension>
+      <extension name=".rsn">
+        <description>30201</description>
+      </extension>
+    </support>
+  </extension>
   <extension point="xbmc.addon.metadata">
     <platform>@PLATFORM@</platform>
     <license>GPL-2.0-or-later</license>

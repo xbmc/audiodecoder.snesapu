@@ -29,3 +29,15 @@ msgstr ""
 msgctxt "#30100"
 msgid "Voice/Speech"
 msgstr ""
+
+#. Supported file extension description about ".spc"
+#: audiodecoder.snesapu/addon.xml.in
+msgctxt "#30200"
+msgid "Nintendo SNES audio data, developed by Nintendo and released in 1990."
+msgstr ""
+
+#. Supported file extension description about ".rsn"
+#: audiodecoder.snesapu/addon.xml.in
+msgctxt "#30201"
+msgid "A .RAR package renamed to .RSN, which is used to save .SPC files."
+msgstr ""

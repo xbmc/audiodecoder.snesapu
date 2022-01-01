@@ -24,7 +24,7 @@ struct SPCContext
 class ATTR_DLL_LOCAL CSPCCodec : public kodi::addon::CInstanceAudioDecoder
 {
 public:
-  CSPCCodec(KODI_HANDLE instance, const std::string& version);
+  CSPCCodec(const kodi::addon::IInstanceInfo& instance);
   virtual ~CSPCCodec();
 
   bool Init(const std::string& filename,

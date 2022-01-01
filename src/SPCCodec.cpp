@@ -21,8 +21,7 @@
 
 #define MAX_PATH_LENGTH 2048
 
-CSPCCodec::CSPCCodec(KODI_HANDLE instance, const std::string& version)
-  : CInstanceAudioDecoder(instance, version)
+CSPCCodec::CSPCCodec(const kodi::addon::IInstanceInfo& instance) : CInstanceAudioDecoder(instance)
 {
 }
 
@@ -128,7 +127,8 @@ bool CSPCCodec::ReadTag(const std::string& filename, kodi::addon::AudioDecoderIn
   bool isRSNBaseRead = kodi::tools::StringUtils::EndsWith(filename, ".rsn");
   std::vector<kodi::vfs::CDirEntry> items;
 
-  if (kodi::tools::StringUtils::EndsWith(filename, ".spc" KODI_ADDON_AUDIODECODER_TRACK_EXT) || isRSNBaseRead)
+  if (kodi::tools::StringUtils::EndsWith(filename, ".spc" KODI_ADDON_AUDIODECODER_TRACK_EXT) ||
+      isRSNBaseRead)
   {
     if (kodi::vfs::GetDirectory("rar://" + URLEncode(toLoad) + "/", ".spc", items))
       toLoad = items[track].Path();
@@ -308,7 +308,7 @@ std::string CSPCCodec::GetGenre(char idChar)
   switch (idChar)
   {
     case 'v':
-      return kodi::GetLocalizedString(30100);
+      return kodi::addon::GetLocalizedString(30100);
     default:
       break;
   }
@@ -349,13 +349,10 @@ class ATTR_DLL_LOCAL CMyAddon : public kodi::addon::CAddonBase
 {
 public:
   CMyAddon() = default;
-  ADDON_STATUS CreateInstance(int instanceType,
-                              const std::string& instanceID,
-                              KODI_HANDLE instance,
-                              const std::string& version,
-                              KODI_HANDLE& addonInstance) override
+  ADDON_STATUS CreateInstance(const kodi::addon::IInstanceInfo& instance,
+                              KODI_ADDON_INSTANCE_HDL& hdl) override
   {
-    addonInstance = new CSPCCodec(instance, version);
+    hdl = new CSPCCodec(instance);
     return ADDON_STATUS_OK;
   }
   virtual ~CMyAddon() = default;

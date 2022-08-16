@@ -26,6 +26,7 @@
     <summary lang="en_GB">SNES-SPC700 Sound File Data Decoder</summary>
     <summary lang="es_ES">Decodificador de Archivos de Datos de Sonido SNES-SPC700</summary>
     <summary lang="id_ID">SNES-SPC700 Sound File Data Dekoder</summary>
+    <summary lang="it_IT">SNES-SPC700 Sound File Data Decoder</summary>
     <summary lang="ko_KR">SNES-SPC700 사운드 파일 데이터 디코더</summary>
     <summary lang="ru_RU">Декодер данных звуковых файлов SNES-SPC700</summary>
     <summary lang="zh_CN">SNES-SPC700 声音文件数据解码器</summary>
@@ -34,6 +35,7 @@
     <description lang="en_GB">The SPC format holds Super Nintendo (SNES) game music. It is named after Sony&apos;s SPC700 contribution to the SNES&apos;s S-SMP audio chip. The SNES was a major jump in audio technology from the NES allowing for stereo sound, more channels, and fully sampled instruments.</description>
     <description lang="es_ES">El formato SPC contiene la música de los juegos de Super Nintendo (SNES). Se llamó así tras la contribución del SPC700 de Sony al chip de audio S-SMP de SNES. La SNES fué un gran salto en la tecnología de audio desde el NES, permitiendo el audio estéreo, más canales e instrumentos completamente muestreados.</description>
     <description lang="id_ID">Format SPC menyimpan musik game Super Nintendo (SNES). Dinamai setelah kontribusi Sony SPC700 pada chip audio S-SMP NES. SNES adalah lompatan besar dalam teknologi audio dari NES yang memungkinkan suara stereo, lebih banyak saluran, dan instrumen sampel penuh.</description>
+    <description lang="it_IT">Il formato SPC contiene la musica dei giochi Super Nintendo (SNES). Prende il nome dal contributo SPC700 di Sony al chip audio S-SMP di SNES. Il SNES è stato un importante salto nella tecnologia audio rispetto al NES consentendo un suono stereo, più canali e strumenti completamente campionati.</description>
     <description lang="ko_KR">SPC 형식에는 슈퍼 닌텐도(SNES) 게임 음악이 들어 있습니다. SNES의 S-SMP 오디오 칩에 대한 Sony의 SPC700 기여에서 이름 붙여졌습니다. SNES는 스테레오 사운드, 더 많은 채널 및 완전히 샘플링된 악기를 허용하는 NES에서 오디오 기술의 주요한 진보였습니다.</description>
     <description lang="ru_RU">В формате SPC хранится музыка из игр Super Nintendo (SNES). Он назван в честь вклада компанией Sony SPC700 в аудиочип S-SMP. SNES была большим скачком в технологии обработки звука по сравнению с NES, позволяя получить стереозвук, больше каналов и полностью сэмплированные инструменты.</description>
     <description lang="zh_CN">SPC 格式保存超级任天堂（SNES）游戏音乐。它是以索尼 SPC700 对 SNES s-SMP 音频芯片的贡献命名的。SNES 是从 NES 到立体声、更多声道和全采样乐器的音频技术的重大飞跃。</description>

@@ -21,6 +21,7 @@
     <assets>
       <icon>icon.png</icon>
     </assets>
+    <summary lang="ca_ES">Descodificador de dades de fitxers de so SNES-SPC700</summary>
     <summary lang="da_DK">SNES-SPC700 lydfil dataafkoder</summary>
     <summary lang="de_DE">SNES-SPC700 Sound File Data Decoder</summary>
     <summary lang="en_GB">SNES-SPC700 Sound File Data Decoder</summary>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="audiodecoder.snesapu"
-  version="21.0.0"
+  version="22.0.0"
   name="SPC Audio Decoder"
   provider-name="spiff">
   <requires>@ADDON_DEPENDS@
-    <import addon="vfs.rar" minversion="21.0.0"/>
+    <import addon="vfs.rar" minversion="22.0.0"/>
   </requires>
   <extension
     point="kodi.audiodecoder"

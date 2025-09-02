@@ -29,6 +29,7 @@
     <assets>
       <icon>icon.png</icon>
     </assets>
+    <summary lang="bs_BA">SNES-SPC700 dekoder zvučnih datoteka</summary>
     <summary lang="ca_ES">Descodificador de dades de fitxers de so SNES-SPC700</summary>
     <summary lang="da_DK">SNES-SPC700 lydfil dataafkoder</summary>
     <summary lang="de_DE">SNES-SPC700 Sound File Data Decoder</summary>
@@ -43,6 +44,7 @@
     <summary lang="ru_RU">Декодер данных звуковых файлов SNES-SPC700</summary>
     <summary lang="sv_SE">SNES-SPC700 Avkodare för ljudfilsdata</summary>
     <summary lang="zh_CN">SNES-SPC700 声音文件数据解码器</summary>
+    <description lang="bs_BA">SPC format sadrži muziku iz igara za Super Nintendo (SNES). Nazvan je po doprinosu Sonyjevog SPC700 S-SMP audio čipa za SNES. SNES je predstavljao veliki skok u audio tehnologiji u odnosu na NES, omogućavajući stereo zvuk, više kanala i potpuno semplirane instrumente.</description>
     <description lang="da_DK">SPC-formatet indeholder Super Nintendo (SNES) spilmusik. Det er opkaldt efter Sonys SPC700-bidrag til SNES&apos;s S-SMP-lydchip. SNES var et stort spring i lydteknologi fra NES, hvilket muliggjorde stereolyd, flere kanaler og fuldt samplede instrumenter.</description>
     <description lang="de_DE">Das SPC-Format enthält Super Nintendo (SNES) Spielmusik. Es ist nach Sonys SPC700-Beitrag zum S-SMP-Audio-Chip des SNES benannt. Das SNES war ein großer Sprung in der Audiotechnologie des NES, der Stereoklang, mehr Kanäle und vollständig gesampelte Instrumente ermöglichte.</description>
     <description lang="en_GB">The SPC format holds Super Nintendo (SNES) game music. It is named after Sony&apos;s SPC700 contribution to the SNES&apos;s S-SMP audio chip. The SNES was a major jump in audio technology from the NES allowing for stereo sound, more channels, and fully sampled instruments.</description>
